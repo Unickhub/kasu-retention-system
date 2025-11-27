@@ -1,7 +1,13 @@
 #!/bin/bash
-echo "Installing Python dependencies..."
+echo "🔧 Starting build process on Render..."
+
+# Set Python path
+export PYTHONPATH=/opt/render/project/src
+
+# Upgrade pip and setuptools
+python -m pip install --upgrade pip setuptools wheel
+
+# Install requirements
 pip install -r requirements.txt
 
-echo "Running any additional setup..."
-
-echo "Build completed successfully!"
+echo "✅ Build completed successfully!"
