@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 mx-auto">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h3 class="mb-0"><i class="fas fa-user-plus"></i> Student Registration</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('student_register') }}">
+                    <div class="mb-3">
+                        <label for="student_id" class="form-label">Student ID *</label>
+                        <input type="text" class="form-control" id="student_id" name="student_id" required>
+                        <div class="form-text">Your official student identification number</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password *</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="confirm_password" class="form-label">Confirm Password *</label>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> 
+                        <strong>Important:</strong> You must be already registered in the system by an administrator.<br>
+                        After registration, login with: <strong>student_[YourStudentID]</strong>
+                    </div>
+
+                    <button type="submit" class="btn btn-info btn-lg w-100">
+                        <i class="fas fa-user-plus"></i> Create Student Account
+                    </button>
+                    
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('login') }}">Already have an account? Login here</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

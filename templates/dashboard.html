@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2 class="mb-4"><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
+        
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card text-center bg-primary text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Students</h5>
+                        <h2 class="card-text">{{ total_students }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center bg-warning text-dark">
+                    <div class="card-body">
+                        <h5 class="card-title">High-Risk Students</h5>
+                        <h2 class="card-text">{{ high_risk }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center bg-success text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Interventions</h5>
+                        <h2 class="card-text">{{ total_interventions }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Recent Risk Assessments</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Student</th>
+                                        <th>Course</th>
+                                        <th>Risk Score</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for prediction in recent_predictions %}
+                                    <tr>
+                                        <td>{{ prediction.student.name }}</td>
+                                        <td>{{ prediction.student.course }}</td>
+                                        <td>
+                                            <span class="badge {% if prediction.risk_score > 0.7 %}bg-danger{% elif prediction.risk_score > 0.4 %}bg-warning{% else %}bg-success{% endif %}">
+                                                {{ prediction.risk_score|float|round(2) }}
+                                            </span>
+                                        </td>
+                                        <td>{{ prediction.prediction_date.strftime('%Y-%m-%d') }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Quick Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('assess') }}" class="btn btn-primary mb-2">
+                                <i class="fas fa-user-graduate"></i> Assess New Student
+                            </a>
+                            <a href="{{ url_for('students') }}" class="btn btn-outline-primary mb-2">
+                                <i class="fas fa-users"></i> View All Students
+                            </a>
+                            <a href="{{ url_for('analytics') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-chart-bar"></i> View Analytics
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2 class="mb-4"><i class="fas fa-chart-bar"></i> Analytics Dashboard</h2>
+        
+        <!-- Quick Actions -->
+        <div class="alert alert-info d-flex justify-content-between align-items-center">
+            <div>
+                <i class="fas fa-info-circle"></i> 
+                <strong>Quick Actions:</strong> 
+                {% if risk_distribution.low == 0 and risk_distribution.medium == 0 and risk_distribution.high == 0 %}
+                Generate test data to see analytics
+                {% else %}
+                View risk distribution and course analysis
+                {% endif %}
+            </div>
+            <div>
+                <a href="{{ url_for('generate_test_data') }}" class="btn btn-sm btn-warning me-2">
+                    <i class="fas fa-database"></i> Generate Test Data
+                </a>
+                <a href="{{ url_for('assess') }}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-user-graduate"></i> Assess New Student
+                </a>
+            </div>
+        </div>
+
+        <!-- Risk Distribution Section -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0"><i class="fas fa-chart-pie"></i> Risk Distribution Overview</h5>
+            </div>
+            <div class="card-body">
+                {% if risk_distribution.low == 0 and risk_distribution.medium == 0 and risk_distribution.high == 0 %}
+                <div class="alert alert-warning text-center">
+                    <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+                    <h4>No Data Available</h4>
+                    <p>No risk assessment data found. You can:</p>
+                    <div class="mt-3">
+                        <a href="{{ url_for('generate_test_data') }}" class="btn btn-warning me-2">
+                            <i class="fas fa-database"></i> Generate Test Data
+                        </a>
+                        <a href="{{ url_for('assess') }}" class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i> Assess a Student
+                        </a>
+                    </div>
+                    <p class="mt-3 small">Or check <a href="{{ url_for('debug_predictions') }}">debug information</a> for details.</p>
+                </div>
+                {% else %}
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <div class="card bg-success text-white mb-3">
+                            <div class="card-body">
+                                <i class="fas fa-check-circle fa-2x mb-2"></i>
+                                <h2>{{ risk_distribution.low }}</h2>
+                                <p class="mb-1"><strong>Low Risk Students</strong></p>
+                                <small>
+                                    {{ (risk_distribution.low / (risk_distribution.low + risk_distribution.medium + risk_distribution.high) * 100) | round(1) }}%
+                                    of total
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-warning text-dark mb-3">
+                            <div class="card-body">
+                                <i class="fas fa-exclamation-circle fa-2x mb-2"></i>
+                                <h2>{{ risk_distribution.medium }}</h2>
+                                <p class="mb-1"><strong>Medium Risk Students</strong></p>
+                                <small>
+                                    {{ (risk_distribution.medium / (risk_distribution.low + risk_distribution.medium + risk_distribution.high) * 100) | round(1) }}%
+                                    of total
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-danger text-white mb-3">
+                            <div class="card-body">
+                                <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                                <h2>{{ risk_distribution.high }}</h2>
+                                <p class="mb-1"><strong>High Risk Students</strong></p>
+                                <small>
+                                    {{ (risk_distribution.high / (risk_distribution.low + risk_distribution.medium + risk_distribution.high) * 100) | round(1) }}%
+                                    of total
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Progress Bar Visualization -->
+<div class="mt-4">
+    <h6><i class="fas fa-chart-bar"></i> Risk Distribution Visualization</h6>
+    <div class="progress" style="height: 35px;">
+        <div class="progress-bar bg-success" 
+             data-low="{{ risk_distribution.low }}"
+             data-total="{{ risk_distribution.low + risk_distribution.medium + risk_distribution.high }}"
+             data-bs-toggle="tooltip" 
+             title="Low Risk: {{ risk_distribution.low }} students">
+            <strong>Low: {{ risk_distribution.low }}</strong>
+        </div>
+        <div class="progress-bar bg-warning" 
+             data-medium="{{ risk_distribution.medium }}"
+             data-total="{{ risk_distribution.low + risk_distribution.medium + risk_distribution.high }}"
+             data-bs-toggle="tooltip" 
+             title="Medium Risk: {{ risk_distribution.medium }} students">
+            <strong>Medium: {{ risk_distribution.medium }}</strong>
+        </div>
+        <div class="progress-bar bg-danger" 
+             data-high="{{ risk_distribution.high }}"
+             data-total="{{ risk_distribution.low + risk_distribution.medium + risk_distribution.high }}"
+             data-bs-toggle="tooltip" 
+             title="High Risk: {{ risk_distribution.high }} students">
+            <strong>High: {{ risk_distribution.high }}</strong>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Calculate and set widths using JavaScript
+    const lowBar = document.querySelector('.progress-bar.bg-success');
+    const mediumBar = document.querySelector('.progress-bar.bg-warning');
+    const highBar = document.querySelector('.progress-bar.bg-danger');
+    
+    const low = parseInt(lowBar.dataset.low);
+    const medium = parseInt(mediumBar.dataset.medium);
+    const high = parseInt(highBar.dataset.high);
+    const total = low + medium + high;
+    
+    if (total > 0) {
+        lowBar.style.width = (low / total * 100) + '%';
+        mediumBar.style.width = (medium / total * 100) + '%';
+        highBar.style.width = (high / total * 100) + '%';
+    }
+});
+</script>
+
+                <!-- Summary Statistics -->
+                <div class="row mt-4 text-center">
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h3>{{ risk_distribution.low + risk_distribution.medium + risk_distribution.high }}</h3>
+                                <p class="text-muted mb-0">Total Assessed</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 class="text-success">{{ risk_distribution.low }}</h3>
+                                <p class="text-muted mb-0">Low Risk</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 class="text-warning">{{ risk_distribution.medium }}</h3>
+                                <p class="text-muted mb-0">Medium Risk</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 class="text-danger">{{ risk_distribution.high }}</h3>
+                                <p class="text-muted mb-0">High Risk</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Course Analysis Section -->
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="card-title mb-0"><i class="fas fa-graduation-cap"></i> Risk Analysis by Course</h5>
+            </div>
+            <div class="card-body">
+                {% if course_analysis %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Course</th>
+                                <th>Number of Students</th>
+                                <th>Average Risk Score</th>
+                                <th>Risk Level</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for course in course_analysis %}
+                            <tr>
+                                <td><strong>{{ course.course }}</strong></td>
+                                <td>{{ course.student_count }}</td>
+                                <td>
+                                    <span class="badge bg-secondary">{{ course.avg_risk|round(2) }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge {% if course.avg_risk > 0.7 %}bg-danger{% elif course.avg_risk > 0.4 %}bg-warning{% else %}bg-success{% endif %}">
+                                        {% if course.avg_risk > 0.7 %}High Risk
+                                        {% elif course.avg_risk > 0.4 %}Medium Risk
+                                        {% else %}Low Risk
+                                        {% endif %}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if course.avg_risk > 0.7 %}
+                                        <span class="text-danger"><i class="fas fa-exclamation-triangle"></i> Critical</span>
+                                    {% elif course.avg_risk > 0.4 %}
+                                        <span class="text-warning"><i class="fas fa-exclamation-circle"></i> Monitor</span>
+                                    {% else %}
+                                        <span class="text-success"><i class="fas fa-check-circle"></i> Stable</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Course Risk Summary -->
+                <div class="mt-3">
+                    <h6>Course Risk Summary:</h6>
+                    <div class="row">
+                        {% for course in course_analysis %}
+                        <div class="col-md-3 mb-2">
+                            <div class="card {% if course.avg_risk > 0.7 %}border-danger{% elif course.avg_risk > 0.4 %}border-warning{% else %}border-success{% endif %}">
+                                <div class="card-body p-2 text-center">
+                                    <small class="fw-bold">{{ course.course }}</small><br>
+                                    <span class="badge {% if course.avg_risk > 0.7 %}bg-danger{% elif course.avg_risk > 0.4 %}bg-warning{% else %}bg-success{% endif %}">
+                                        {{ course.avg_risk|round(2) }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% else %}
+                <div class="alert alert-info text-center">
+                    <i class="fas fa-info-circle fa-2x mb-3"></i>
+                    <h5>No Course Analysis Data</h5>
+                    <p>Course analysis data will appear here after students are assessed.</p>
+                    <a href="{{ url_for('assess') }}" class="btn btn-primary mt-2">
+                        <i class="fas fa-user-graduate"></i> Start Assessing Students
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Debug Information (Admins only) -->
+        {% if current_user_role != 'student' %}
+        <div class="card mt-4">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="card-title mb-0"><i class="fas fa-bug"></i> Debug Information</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-2">Total predictions in database: <strong>{{ risk_distribution.low + risk_distribution.medium + risk_distribution.high }}</strong></p>
+                <a href="{{ url_for('debug_predictions') }}" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-search"></i> View Detailed Debug Info
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Enable Bootstrap tooltips
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+});
+</script>
+{% endblock %}

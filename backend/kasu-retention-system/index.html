@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto text-center">
+        <div class="hero-section py-5">
+            <h1 class="display-4 mb-4">Kaduna State University Academic RS</h1>
+            <p class="lead mb-4">Proactively identify at-risk students and implement interventions to improve retention rates</p>
+            
+            {% if not current_user.is_authenticated %}
+            <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg me-3">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+            {% else %}
+            <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg me-3">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+            <a href="{{ url_for('assess') }}" class="btn btn-outline-primary btn-lg">
+                <i class="fas fa-user-graduate"></i> Assess Student
+            </a>
+            {% endif %}
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
+                        <h3 class="card-title">Predictive Analytics</h3>
+                        <p class="card-text">Identify at-risk students using machine learning algorithms before they drop out.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-hands-helping fa-3x text-primary mb-3"></i>
+                        <h3 class="card-title">Targeted Interventions</h3>
+                        <p class="card-text">Create and track personalized intervention strategies for each student.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-chart-pie fa-3x text-primary mb-3"></i>
+                        <h3 class="card-title">Comprehensive Reporting</h3>
+                        <p class="card-text">Generate detailed reports on retention rates and intervention effectiveness.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

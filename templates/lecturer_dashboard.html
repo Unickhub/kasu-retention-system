@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2 class="mb-4"><i class="fas fa-chalkboard-teacher"></i> Lecturer Dashboard</h2>
+        
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card text-center bg-primary text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Department</h5>
+                        <h2 class="card-text">{{ lecturer.department }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center bg-success text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Students</h5>
+                        <h2 class="card-text">{{ total_students }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center bg-warning text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">At-Risk Students</h5>
+                        <h2 class="card-text">{{ high_risk_students|length }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if high_risk_students %}
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="card-title mb-0"><i class="fas fa-exclamation-triangle"></i> Students Needing Attention</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Student ID</th>
+                                <th>Course</th>
+                                <th>Risk Score</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in high_risk_students %}
+                            <tr>
+                                <td>{{ item.student.name }}</td>
+                                <td>{{ item.student.student_id }}</td>
+                                <td>{{ item.student.course }}</td>
+                                <td>
+                                    <span class="badge {% if item.risk_score > 0.7 %}bg-danger{% else %}bg-warning{% endif %}">
+                                        {{ item.risk_score|round(2) }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('assessment_result', student_id=item.student.id) }}" class="btn btn-sm btn-info">
+                                        View Details
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i> No high-risk students found in your department.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

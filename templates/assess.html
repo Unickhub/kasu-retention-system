@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0"><i class="fas fa-user-graduate"></i> Student Risk Assessment</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('assess') }}">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Student Name *</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="student_id" class="form-label">Student ID *</label>
+                                <input type="text" class="form-control" id="student_id" name="student_id" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="course" class="form-label">Course of Study *</label>
+                                <select class="form-select" id="course" name="course" required>
+                                    <option value="">Select Course</option>
+                                    <option value="Medicine">Medicine</option>
+                                    <option value="Engineering">Engineering</option>
+                                    <option value="Law">Law</option>
+                                    <option value="Business">Business Administration</option>
+                                    <option value="Computer Science">Computer Science</option>
+                                    <option value="Education">Education</option>
+                                    <option value="Agriculture">Agriculture</option>
+                                    
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="age" class="form-label">Age</label>
+                                <input type="number" class="form-control" id="age" name="age" value="20" min="16" max="40">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="gpa" class="form-label">GPA (0.0-5.0) *</label>
+                                <input type="number" class="form-control" id="gpa" name="gpa" step="0.1" min="0" max="5" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="attendance" class="form-label">Attendance (%) *</label>
+                                <input type="number" class="form-control" id="attendance" name="attendance" min="0" max="100" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="failures" class="form-label">Course Failures *</label>
+                                <input type="number" class="form-control" id="failures" name="failures" min="0" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="residence" class="form-label">Residence Location</label>
+                                <select class="form-select" id="residence" name="residence">
+                                    <option value="Urban">Urban</option>
+                                    <option value="Suburban">Suburban</option>
+                                    <option value="Rural">Rural</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="parental_income" class="form-label">Parental Income (₦)</label>
+                                <input type="number" class="form-control" id="parental_income" name="parental_income" value="300000" step="10000">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Fields marked with * are required.
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        <i class="fas fa-calculator"></i> Assess Dropout Risk
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

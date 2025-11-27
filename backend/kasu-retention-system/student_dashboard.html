@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2 class="mb-4"><i class="fas fa-tachometer-alt"></i> Student Dashboard</h2>
+        
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card text-center bg-primary text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Student ID</h5>
+                        <h2 class="card-text">{{ student.student_id }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center bg-success text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">GPA</h5>
+                        <h2 class="card-text">{{ student.gpa }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center bg-info text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Attendance</h5>
+                        <h2 class="card-text">{{ student.attendance }}%</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if prediction %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title">Your Risk Assessment</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert {% if prediction.risk_score > 0.7 %}alert-danger{% elif prediction.risk_score > 0.4 %}alert-warning{% else %}alert-success{% endif %}">
+                    <h4 class="alert-heading">
+                        Risk Score: {{ prediction.risk_score|float|round(2) }} 
+                        ({{ "High Risk" if prediction.risk_score > 0.7 else "Medium Risk" if prediction.risk_score > 0.4 else "Low Risk" }})
+                    </h4>
+                    <!-- FIXED LINE BELOW -->
+                    <p class="mb-0">
+                        {% if prediction.risk_score > 0.7 %}
+                            🚨 CRITICAL: Immediate counseling, financial aid assessment, parental notification
+                        {% elif prediction.risk_score > 0.4 %}
+                            ⚠️ MODERATE: Academic counseling, tutoring, attendance monitoring
+                        {% else %}
+                            ✅ LOW: Regular check-ins, progress monitoring
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i> No risk assessment available yet. Please check back later.
+        </div>
+        {% endif %}
+
+        {% if interventions %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title">Recommended Interventions</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Scheduled Date</th>
+                                <th>Status</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for intervention in interventions %}
+                            <tr>
+                                <td>{{ intervention.intervention_type }}</td>
+                                <td>{{ intervention.scheduled_date.strftime('%Y-%m-%d') }}</td>
+                                <td>
+                                    <span class="badge {% if intervention.status == 'completed' %}bg-success{% elif intervention.status == 'scheduled' %}bg-warning{% else %}bg-secondary{% endif %}">
+                                        {{ intervention.status }}
+                                    </span>
+                                </td>
+                                <td>{{ intervention.notes or 'No notes' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i> No interventions recommended at this time.
+        </div>
+        {% endif %}
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Your Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Name:</strong> {{ student.name }}</p>
+                        <p><strong>Course:</strong> {{ student.course }}</p>
+                        <p><strong>Residence:</strong> {{ student.residence }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Course Failures:</strong> {{ student.failures }}</p>
+                        <p><strong>Parental Income:</strong> ₦{{ "{:,.0f}".format(student.parental_income) }}</p>
+                        <p><strong>Account Created:</strong> {{ student.created_date.strftime('%Y-%m-%d') }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
