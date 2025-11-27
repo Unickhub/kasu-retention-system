@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 mx-auto text-center">
+        <div class="card shadow">
+            <div class="card-body py-5">
+                <i class="fas fa-server fa-5x text-danger mb-4"></i>
+                <h1>500 - Server Error</h1>
+                <p class="lead">Something went wrong on our server.</p>
+                <p class="text-muted">Our technical team has been notified and is working on the issue.</p>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a href="{{ url_for('home') }}" class="btn btn-primary me-md-2">
+                        <i class="fas fa-home"></i> Go Home
+                    </a>
+                    <a href="javascript:history.back()" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Go Back
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
